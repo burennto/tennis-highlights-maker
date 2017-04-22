@@ -1,9 +1,13 @@
+require_relative '../overlay/score_overlay'
+
 class MatchLoader
 
   CSV_OPTIONS = { headers: true, header_converters: :symbol, converters: :all }
 
   def initialize(match)
     @match = match
+
+    create_score_overlay
   end
 
   def load_csv(path)
@@ -12,6 +16,10 @@ class MatchLoader
   end
 
   private
+
+  def create_score_overlay
+    ScoreOverlay.new(@match).to_png
+  end
 
   def record_point(row)
     point = Point.new(
@@ -31,6 +39,7 @@ class MatchLoader
     )
 
     @match.point!(point)
+    create_score_overlay
   end
 
   def parse_ace(value)

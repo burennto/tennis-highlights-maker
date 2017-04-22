@@ -1,26 +1,4 @@
-require 'fileutils'
-require 'csv'
-
-require_relative './src/tennis/team'
-require_relative './src/tennis/player'
-require_relative './src/tennis/match'
-require_relative './src/tennis/set'
-require_relative './src/tennis/game'
-require_relative './src/tennis/point'
-require_relative './src/tennis/stats'
-
-require_relative './src/video/video'
-require_relative './src/video/video_editor'
-
-require_relative './src/util/match_loader'
-require_relative './src/util/time_util'
-
-require_relative './src/overlay/stats_overlay'
-
-FileUtils.mkdir_p('./tmp/raw')
-FileUtils.mkdir_p('./tmp/overlays')
-
-# ======================================================================
+require_relative './src/highlights_maker'
 
 TITLE = 'Melbourne Park Social A Grade (Round 6)'
 DATE  = '16 March, 2017'
@@ -46,22 +24,18 @@ CSV_PATH = File.expand_path '~/Documents/tennis_scores/2017-02-23-round-3-double
 
 # ======================================================================
 
-match = Match.new(TEAMS[0], TEAMS[1])
-MatchLoader.new(match).load_csv(CSV_PATH)
-
-stats = Stats.new(match)
-stats.analyze!
-
-puts match
-puts stats
-
-stats_overlay = StatsOverlay.new(
-  stats: stats,
+maker = HighlightsMaker.new(
   title: TITLE,
   date: DATE,
-  p1_name: TEAMS[0].display_name,
-  p2_name: TEAMS[1].display_name,
+  p1: TEAMS[0],
+  p2: TEAMS[1],
+  csv_path: CSV_PATH,
 )
-stats_overlay.to_png('./tmp/overlays/stats.png')
 
-# match_video = VideoEditor.trim_and_concat(SOURCES)
+maker.run
+
+
+
+
+
+# # match_video = VideoEditor.trim_and_concat(SOURCES)

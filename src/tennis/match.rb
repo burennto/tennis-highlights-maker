@@ -1,8 +1,9 @@
 class Match
 
-  attr_reader :sets
+  attr_reader :sets, :p1, :p2
 
   def initialize(p1, p2)
+    @p1, @p2 = p1, p2
     @sets = [ Set.new(1) ]
   end
 
