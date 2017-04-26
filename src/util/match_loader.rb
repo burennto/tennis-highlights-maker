@@ -6,8 +6,6 @@ class MatchLoader
 
   def initialize(match)
     @match = match
-
-    create_score_overlay
   end
 
   def load_csv(path)
@@ -17,16 +15,16 @@ class MatchLoader
 
   private
 
-  def create_score_overlay
-    ScoreOverlay.new(@match).to_png
-  end
-
   def record_point(row)
     point = Point.new(
       start: row[:start],
       finish: row[:finish],
+      video_finish: row[:keep_rolling],
 
-      server_id: row[:server_id],
+      set: 1,
+      game: row[:game],
+
+      server_id: row[:server_id].to_i,
       serve_1: parse_serve(row[:serve_1]),
       serve_2: parse_serve(row[:serve_2]),
       ace: parse_ace(row[:ace]),
@@ -39,7 +37,6 @@ class MatchLoader
     )
 
     @match.point!(point)
-    create_score_overlay
   end
 
   def parse_ace(value)
@@ -47,8 +44,8 @@ class MatchLoader
   end
 
   def parse_serve(value)
-    case value.upcase
-    when 'IN' then true
+    case value.to_s.upcase
+    when 'IN'           then true
     when 'OUT', 'FAULT' then false
     else nil
     end

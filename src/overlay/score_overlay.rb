@@ -18,8 +18,8 @@ class ScoreOverlay
 
   PADDING = 14
 
-  def initialize(match)
-    filename = "#{match.points.count}.png"
+  def initialize(snapshot, p1, p2)
+    filename = "#{snapshot.point_no}.png"
     @destination = File.join('./tmp', 'overlays', filename)
 
     @img = Image.new(IMG_WIDTH, IMG_HEIGHT) { self.background_color = BG_COLOR }
@@ -34,15 +34,14 @@ class ScoreOverlay
     @draw.interline_spacing = 0
     @draw.gravity = Magick::WestGravity
 
-    @match = match
-    @p1_name = @match.p1.display_name
-    @p2_name = @match.p2.display_name
+    @p1_name = p1.display_name
+    @p2_name = p2.display_name
 
-    @p1_games = @match.games.count { |game| game.winner == 1 }
-    @p2_games = @match.games.count { |game| game.winner == 2 }
+    @p1_games = snapshot.games_won(id: 1).count
+    @p2_games = snapshot.games_won(id: 2).count
 
-    @p1_points = @match.sets.last.games.last.points.count { |point| point.winner_id == 1 }
-    @p2_points = @match.sets.last.games.last.points.count { |point| point.winner_id == 2 }
+    @p1_points = snapshot.points_won(1).count
+    @p2_points = snapshot.points_won(2).count
 
     @p1_is_serving = (@p1_games + @p2_games) % 2 == 0
     @p2_is_serving = !@p1_is_serving
@@ -66,18 +65,15 @@ class ScoreOverlay
     @p2_points_pretty = Score.pretty(@p2_points, @p1_points)
 
     if @p1_games == 0 && @p2_games == 0
-      @p1_games = ''
-      @p2_games = ''
-    else
-      @p1_games = @p1_games.to_s
-      @p2_games = @p2_games.to_s
+      @p1_games = nil
+      @p2_games = nil
     end
 
     draw_player_points(@p1_points_pretty, p1_offset_y)
     draw_player_points(@p2_points_pretty, p2_offset_y)
 
-    draw_player_games(@p1_games, p1_offset_y)
-    draw_player_games(@p2_games, p2_offset_y)
+    draw_player_games(@p1_games.to_s, p1_offset_y)
+    draw_player_games(@p2_games.to_s, p2_offset_y)
 
     @img.write(@destination)
   end

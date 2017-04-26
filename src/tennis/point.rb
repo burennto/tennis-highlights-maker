@@ -1,13 +1,19 @@
 class Point
 
-  attr_reader :start, :finish, :server_id, :serve_1, :serve_2, :ace,
+  attr_reader :set, :game,
+              :video_finish, :start, :finish,
+              :server_id, :serve_1, :serve_2, :ace,
               :winner_id, :win_type, :net_point, :break_point
 
   WIN_TYPES = %w(WINNER FORCED UNFORCED BAD_CALL SKIPPED)
 
   def initialize(args)
-    @start  = args[:start]
-    @finish = args[:finish]
+    @set  = args[:set]
+    @game = args[:game]
+
+    @start        = args[:start]
+    @finish       = args[:finish]
+    @video_finish = args[:video_finish]
 
     @server_id = args[:server_id]
     @serve_1   = args[:serve_1]
@@ -44,8 +50,8 @@ class Point
     @break_point == true
   end
 
-  def to_s
-    "WINNER = #{@winner_id}"
-  end
+  # def to_s
+  #   "WINNER = #{@winner_id}"
+  # end
 
 end

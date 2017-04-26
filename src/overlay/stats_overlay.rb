@@ -20,7 +20,7 @@ class StatsOverlay
 
   PADDING = 14
 
-  def initialize(stats:, title:, date:, p1_name:, p2_name:)
+  def initialize(stats:, title:, date:, p1: , p2:)
     @img = Image.new(IMG_WIDTH, IMG_HEIGHT) { self.background_color = BG_COLOR }
 
     @draw = Magick::Draw.new
@@ -36,7 +36,8 @@ class StatsOverlay
 
     @stats = stats
     @title = title
-    @p1_name, @p2_name = p1_name, p2_name
+    @p1_name = p1.display_name
+    @p2_name = p2.display_name
 
     @duration  = TimeUtil.seconds_to_timestamp(@stats.duration)
     @scoreline = @stats.scoreline.map { |set| "#{set[0]}-#{set[1]}" }.join(' ')
@@ -129,8 +130,8 @@ class StatsOverlay
     serve_2_points_won_percentage = (@stats.serve_2_points_won_percentage[i] * 100).to_i.to_s + '%'
     winners                       = @stats.winners[i].to_s
     unforced_errors               = @stats.unforced_errors[i].to_s
-    net_points_won                = "#{@stats.net_points_won[i][0]}/#{@stats.net_points_won[i][1]}"
-    break_points_won              = "#{@stats.break_points_won[i][0]}/#{@stats.break_points_won[i][1]}"
+    net_points                    = "#{@stats.net_points[i][0]}/#{@stats.net_points[i][1]}"
+    break_points                  = "#{@stats.break_points[i][0]}/#{@stats.break_points[i][1]}"
 
     @draw.annotate(@img, 0, 0, offset_x, offset_y, player_name)
 
@@ -160,10 +161,10 @@ class StatsOverlay
     @draw.annotate(@img, 0, 0, offset_x, offset_y, unforced_errors)
 
     offset_y += offset_y_distance
-    @draw.annotate(@img, 0, 0, offset_x, offset_y, net_points_won)
+    @draw.annotate(@img, 0, 0, offset_x, offset_y, net_points)
 
     offset_y += offset_y_distance
-    @draw.annotate(@img, 0, 0, offset_x, offset_y, break_points_won)
+    @draw.annotate(@img, 0, 0, offset_x, offset_y, break_points)
   end
 
 end
